@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="author = &ldquo;Xu Haoxin&rdquo; title = &ldquo;基于电信客户数据的生存分析：从建模到客户价值评估&rdquo; date = &ldquo;2025-04-14&rdquo; description = &ldquo;通过 Kaplan-Meier、Cox 和 AFT 等方法全面探索客户流失分析与生存建模，并结合财务评估计算客户生命周期价值。&rdquo; tags = [&ldquo;生存分析&rdquo;, &ldquo;客户流失&rdquo;, &ldquo;电信数据&rdquo;, &ldquo;Cox模型&rdquo;, &ldquo;AFT&rdquo;, &ldquo;Kaplan-Meier&rdquo;] categories = [&ldquo;数据科学&rdquo;, &ldquo;统计建模&rdquo;] series = [&ldquo;生存分析实战&rdquo;] aliases = [&ldquo;telco-churn-survival&rdquo;] image = &ldquo;survival-cover.jpg&rdquo; +++\n生存分析报告 第一步：数据导入与清洗 分析目的 本步骤的目标是将外部电信客户数据集导入分析环境，并进行初步清洗，为后续建模提供结构规范、字段明确、无缺失值的数据源。\n主要步骤与结果 数据来源：IBM 提供的 &ldquo;Telco 客户流失数据集&rdquo;，每条记录代表一位客户，包含其人口特征、服务使用信息、账单信息及是否流失等字段。 数据加载结果： 成功导入原始 CSV 数据； 包括 tenure（服务时间）与 churnString（是否流失）两个关键字段。 数据清洗内容： 去除 totalCharges 缺失记录； 将 churnString 字段转为数值型 churn 字段（1 表示已流失，0 表示未流失）； 删除原始 churnString 字段； 形成清洗后的 Silver 层数据表，共保留约 7032 条记录。 输出结果：结构规范、字段清晰的建模数据表 silver_monthly_customers，作为后续分析基础。 第二步：Kaplan-Meier 生存曲线分析 分析目的 通过 Kaplan-Meier 方法构建客户生存曲线，观察总体及分组客户的留存概率随时间的变化趋势，并用 Log-Rank 检验判断分组之间差异的统计显著性。\n">
+<title></title>
+
+<link rel='canonical' href='http://localhost:1313/p/'>
+
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="">
+<meta property='og:description' content="author = &ldquo;Xu Haoxin&rdquo; title = &ldquo;基于电信客户数据的生存分析：从建模到客户价值评估&rdquo; date = &ldquo;2025-04-14&rdquo; description = &ldquo;通过 Kaplan-Meier、Cox 和 AFT 等方法全面探索客户流失分析与生存建模，并结合财务评估计算客户生命周期价值。&rdquo; tags = [&ldquo;生存分析&rdquo;, &ldquo;客户流失&rdquo;, &ldquo;电信数据&rdquo;, &ldquo;Cox模型&rdquo;, &ldquo;AFT&rdquo;, &ldquo;Kaplan-Meier&rdquo;] categories = [&ldquo;数据科学&rdquo;, &ldquo;统计建模&rdquo;] series = [&ldquo;生存分析实战&rdquo;] aliases = [&ldquo;telco-churn-survival&rdquo;] image = &ldquo;survival-cover.jpg&rdquo; +++\n生存分析报告 第一步：数据导入与清洗 分析目的 本步骤的目标是将外部电信客户数据集导入分析环境，并进行初步清洗，为后续建模提供结构规范、字段明确、无缺失值的数据源。\n主要步骤与结果 数据来源：IBM 提供的 &ldquo;Telco 客户流失数据集&rdquo;，每条记录代表一位客户，包含其人口特征、服务使用信息、账单信息及是否流失等字段。 数据加载结果： 成功导入原始 CSV 数据； 包括 tenure（服务时间）与 churnString（是否流失）两个关键字段。 数据清洗内容： 去除 totalCharges 缺失记录； 将 churnString 字段转为数值型 churn 字段（1 表示已流失，0 表示未流失）； 删除原始 churnString 字段； 形成清洗后的 Silver 层数据表，共保留约 7032 条记录。 输出结果：结构规范、字段清晰的建模数据表 silver_monthly_customers，作为后续分析基础。 第二步：Kaplan-Meier 生存曲线分析 分析目的 通过 Kaplan-Meier 方法构建客户生存曲线，观察总体及分组客户的留存概率随时间的变化趋势，并用 Log-Rank 检验判断分组之间差异的统计显著性。\n">
+<meta property='og:url' content='http://localhost:1313/p/'>
+<meta property='og:site_name' content='Example Site'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' />
+<meta name="twitter:title" content="">
+<meta name="twitter:description" content="author = &ldquo;Xu Haoxin&rdquo; title = &ldquo;基于电信客户数据的生存分析：从建模到客户价值评估&rdquo; date = &ldquo;2025-04-14&rdquo; description = &ldquo;通过 Kaplan-Meier、Cox 和 AFT 等方法全面探索客户流失分析与生存建模，并结合财务评估计算客户生命周期价值。&rdquo; tags = [&ldquo;生存分析&rdquo;, &ldquo;客户流失&rdquo;, &ldquo;电信数据&rdquo;, &ldquo;Cox模型&rdquo;, &ldquo;AFT&rdquo;, &ldquo;Kaplan-Meier&rdquo;] categories = [&ldquo;数据科学&rdquo;, &ldquo;统计建模&rdquo;] series = [&ldquo;生存分析实战&rdquo;] aliases = [&ldquo;telco-churn-survival&rdquo;] image = &ldquo;survival-cover.jpg&rdquo; +++\n生存分析报告 第一步：数据导入与清洗 分析目的 本步骤的目标是将外部电信客户数据集导入分析环境，并进行初步清洗，为后续建模提供结构规范、字段明确、无缺失值的数据源。\n主要步骤与结果 数据来源：IBM 提供的 &ldquo;Telco 客户流失数据集&rdquo;，每条记录代表一位客户，包含其人口特征、服务使用信息、账单信息及是否流失等字段。 数据加载结果： 成功导入原始 CSV 数据； 包括 tenure（服务时间）与 churnString（是否流失）两个关键字段。 数据清洗内容： 去除 totalCharges 缺失记录； 将 churnString 字段转为数值型 churn 字段（1 表示已流失，0 表示未流失）； 删除原始 churnString 字段； 形成清洗后的 Silver 层数据表，共保留约 7032 条记录。 输出结果：结构规范、字段清晰的建模数据表 silver_monthly_customers，作为后续分析基础。 第二步：Kaplan-Meier 生存曲线分析 分析目的 通过 Kaplan-Meier 方法构建客户生存曲线，观察总体及分组客户的留存概率随时间的变化趋势，并用 Log-Rank 检验判断分组之间差异的统计显著性。\n">
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu_f509edb42ecc0ebd.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Example Site</a></h1>
+            <h2 class="site-description">Example description</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/CaiJimmy/hugo-theme-stack'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://twitter.com'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/about/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>About</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>Archives</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>Search</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/links/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>Links</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+                    
+                        <li id="i18n-switch">  
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 5h7" />
+  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
+  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
+  <path d="M12 20l4 -9l4 9" />
+  <path d="M19.1 18h-6.2" />
+</svg>
+
+
+
+                            <select name="language" title="language" onchange="window.location.href = this.selectedOptions[0].value">
+                                
+                                    <option value="http://localhost:1313/" selected>English</option>
+                                
+                                    <option value="http://localhost:1313/zh-cn/" >中文</option>
+                                
+                                    <option value="http://localhost:1313/ar/" >عربي</option>
+                                
+                            </select>
+                        </li>
+                    
+                
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>Dark Mode</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">Table of contents</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#生存分析报告">生存分析报告</a>
+      <ol>
+        <li><a href="#第一步数据导入与清洗">第一步：数据导入与清洗</a>
+          <ol>
+            <li><a href="#分析目的">分析目的</a></li>
+            <li><a href="#主要步骤与结果">主要步骤与结果</a></li>
+          </ol>
+        </li>
+        <li><a href="#第二步kaplan-meier-生存曲线分析">第二步：Kaplan-Meier 生存曲线分析</a>
+          <ol>
+            <li><a href="#分析目的-1">分析目的</a></li>
+            <li><a href="#主要分析步骤与结果">主要分析步骤与结果</a></li>
+          </ol>
+        </li>
+        <li><a href="#第三步cox-比例风险模型分析">第三步：Cox 比例风险模型分析</a>
+          <ol>
+            <li><a href="#分析目的-2">分析目的</a></li>
+            <li><a href="#主要分析步骤与结果-1">主要分析步骤与结果</a></li>
+          </ol>
+        </li>
+        <li><a href="#第四步加速失效时间模型aft分析">第四步：加速失效时间模型（AFT）分析</a>
+          <ol>
+            <li><a href="#分析目的-3">分析目的</a></li>
+            <li><a href="#分析步骤">分析步骤</a></li>
+          </ol>
+        </li>
+        <li><a href="#第五步生存概率驱动的客户价值评估">第五步：生存概率驱动的客户价值评估</a>
+          <ol>
+            <li><a href="#分析目的-4">分析目的</a></li>
+            <li><a href="#分析步骤与方法">分析步骤与方法</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/"></a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    3 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>author = &ldquo;Xu Haoxin&rdquo;
+title = &ldquo;基于电信客户数据的生存分析：从建模到客户价值评估&rdquo;
+date = &ldquo;2025-04-14&rdquo;
+description = &ldquo;通过 Kaplan-Meier、Cox 和 AFT 等方法全面探索客户流失分析与生存建模，并结合财务评估计算客户生命周期价值。&rdquo;
+tags = [&ldquo;生存分析&rdquo;, &ldquo;客户流失&rdquo;, &ldquo;电信数据&rdquo;, &ldquo;Cox模型&rdquo;, &ldquo;AFT&rdquo;, &ldquo;Kaplan-Meier&rdquo;]
+categories = [&ldquo;数据科学&rdquo;, &ldquo;统计建模&rdquo;]
+series = [&ldquo;生存分析实战&rdquo;]
+aliases = [&ldquo;telco-churn-survival&rdquo;]
+image = &ldquo;survival-cover.jpg&rdquo;
++++</p>
+<h2 id="生存分析报告">生存分析报告
+</h2><h3 id="第一步数据导入与清洗">第一步：数据导入与清洗
+</h3><h4 id="分析目的">分析目的
+</h4><p>本步骤的目标是将外部电信客户数据集导入分析环境，并进行初步清洗，为后续建模提供结构规范、字段明确、无缺失值的数据源。</p>
+<h4 id="主要步骤与结果">主要步骤与结果
+</h4><ol>
+<li><strong>数据来源</strong>：IBM 提供的 &ldquo;Telco 客户流失数据集&rdquo;，每条记录代表一位客户，包含其人口特征、服务使用信息、账单信息及是否流失等字段。</li>
+<li><strong>数据加载结果</strong>：
+<ul>
+<li>成功导入原始 CSV 数据；</li>
+<li>包括 <code>tenure</code>（服务时间）与 <code>churnString</code>（是否流失）两个关键字段。</li>
+</ul>
+</li>
+<li><strong>数据清洗内容</strong>：
+<ul>
+<li>去除 <code>totalCharges</code> 缺失记录；</li>
+<li>将 <code>churnString</code> 字段转为数值型 <code>churn</code> 字段（1 表示已流失，0 表示未流失）；</li>
+<li>删除原始 <code>churnString</code> 字段；</li>
+<li>形成清洗后的 Silver 层数据表，共保留约 7032 条记录。</li>
+</ul>
+</li>
+<li><strong>输出结果</strong>：结构规范、字段清晰的建模数据表 <code>silver_monthly_customers</code>，作为后续分析基础。</li>
+</ol>
+<hr>
+<h3 id="第二步kaplan-meier-生存曲线分析">第二步：Kaplan-Meier 生存曲线分析
+</h3><h4 id="分析目的-1">分析目的
+</h4><p>通过 Kaplan-Meier 方法构建客户生存曲线，观察总体及分组客户的留存概率随时间的变化趋势，并用 Log-Rank 检验判断分组之间差异的统计显著性。</p>
+<h4 id="主要分析步骤与结果">主要分析步骤与结果
+</h4><p>Kaplan-Meier 生存函数的估计值定义为：</p>
+<p><strong>$\hat{S}(t) = \prod_{t_i \le t} \left( 1 - \frac{d_i}{n_i} \right)$</strong></p>
+<p>其中：</p>
+<ul>
+<li><strong>$t_i$</strong>：发生事件的时间点（按时间顺序排列）；</li>
+<li><strong>$d_i$</strong>：在时间 <strong>t_i</strong> 发生事件的个数；</li>
+<li><strong>$n_i$</strong>：在时间 <strong>t_i</strong> 之前<strong>仍处于风险中</strong>的个体数（即还没失踪，也没发生事件的人）；</li>
+<li><strong>$\hat{S}(t)$</strong>：在时间 <strong>t</strong> 仍“存活”（事件未发生）的概率。
+<img src="/p/image/survival_analysis/1744441021100.png"
+	width="372"
+	height="278"
+	srcset="/p/image/survival_analysis/1744441021100_hu_fd344d256fe3c35e.png 480w, /p/image/survival_analysis/1744441021100_hu_7875603229138091.png 1024w"
+	loading="lazy"
+	
+		alt="1744441021100"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="133"
+		data-flex-basis="321px"
+	
+></li>
+<li><strong>横轴（x-axis）</strong>：表示时间（即客户与公司的关系持续了多久，单位：月）；</li>
+<li><strong>纵轴（y-axis）</strong>：表示“还没流失的概率”，也就是 <strong>生存概率</strong>S(t)<strong>。</strong></li>
+</ul>
+<p>“协变量层级的 Kaplan-Meier 曲线”指的是<strong>分组后的生存曲线</strong>，例如按性别、付款方式、是否使用 Online Security 这种特征划分。</p>
+<ul>
+<li>如果两组生存曲线差异大 → 说明这个变量对生存概率有影响；</li>
+<li>差异小（曲线几乎重合） → 说明这个变量的预测能力弱。</li>
+</ul>
+<p>当肉眼看到曲线差不多时，还要通过统计检验来确认 → 就用 <strong>log-rank test（对数秩检验）</strong>。</p>
+<ul>
+<li><strong>原假设 H₀</strong>：两个组生存曲线无显著差异；</li>
+<li>如果 p-value &gt; 0.05 → 保留原假设 → 差异不显著；</li>
+<li>如果 p-value &lt; 0.05 → 拒绝原假设 → 差异显著。</li>
+</ul>
+<p><img src="/p/image/survival_analysis/1744441554516.png"
+	width="372"
+	height="262"
+	srcset="/p/image/survival_analysis/1744441554516_hu_3a2001cdba22f899.png 480w, /p/image/survival_analysis/1744441554516_hu_8323b0de83d7f5d9.png 1024w"
+	loading="lazy"
+	
+		alt="1744441554516"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="141"
+		data-flex-basis="340px"
+	
+></p>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th></th>
+      <th>test_statistic</th>
+      <th>p</th>
+      <th>-log2(p)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Female</th>
+      <th>Male</th>
+      <td>1.61011</td>
+      <td>0.204476</td>
+      <td>2.289995</td>
+    </tr>
+  </tbody>
+</table>
+<p>p 值 &gt; 0.05 → 没有统计显著性差异；</p>
+<p><strong>结论：性别不是客户流失的重要影响因素</strong>；</p>
+<p><img src="/p/image/survival_analysis/1744441670706.png"
+	width="372"
+	height="262"
+	srcset="/p/image/survival_analysis/1744441670706_hu_e4489294271c7475.png 480w, /p/image/survival_analysis/1744441670706_hu_52fc508e57fea6f8.png 1024w"
+	loading="lazy"
+	
+		alt="1744441670706"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="141"
+		data-flex-basis="340px"
+	
+></p>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th></th>
+      <th>test_statistic</th>
+      <th>p</th>
+      <th>-log2(p)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>No</th>
+      <th>Yes</th>
+      <td>75.800079</td>
+      <td>3.138886e-18</td>
+      <td>58.144453</td>
+    </tr>
+  </tbody>
+</table>
+<p><strong>onlineSecurity 很可能是显著的影响因素。</strong></p>
+<p><strong>除了 phoneService 和 gender，其余协变量在 Log-rank 检验中均表现出显著的生存曲线差异（p &lt; 0.05）</strong> <strong>，即它们对客户流失具有统计意义上的影响。</strong></p>
+<div class="table-wrapper"><table>
+  <thead>
+      <tr>
+          <th><strong>协变量（变量名）</strong></th>
+          <th><strong>含义简述</strong></th>
+          <th><strong>显著性</strong></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>gender</td>
+          <td>性别</td>
+          <td>❌ 否</td>
+      </tr>
+      <tr>
+          <td>phoneService</td>
+          <td>是否有电话服务</td>
+          <td>❌ 否</td>
+      </tr>
+      <tr>
+          <td>internetService</td>
+          <td>上网服务类型（DSL/Fiber等）</td>
+          <td>✔️ 是</td>
+      </tr>
+      <tr>
+          <td>paymentMethod</td>
+          <td>付款方式</td>
+          <td>✔️ 是</td>
+      </tr>
+      <tr>
+          <td>techSupport</td>
+          <td>是否启用技术支持</td>
+          <td>✔️ 是</td>
+      </tr>
+      <tr>
+          <td>onlineSecurity</td>
+          <td>是否启用在线安全服务</td>
+          <td>✔️ 是</td>
+      </tr>
+      <tr>
+          <td>onlineBackup</td>
+          <td>是否启用在线备份</td>
+          <td>✔️ 是</td>
+      </tr>
+      <tr>
+          <td>deviceProtection</td>
+          <td>是否启用设备保护</td>
+          <td>✔️ 是</td>
+      </tr>
+      <tr>
+          <td>partner</td>
+          <td>是否有配偶</td>
+          <td>✔️ 是</td>
+      </tr>
+      <tr>
+          <td>dependents</td>
+          <td>是否有家属</td>
+          <td>✔️ 是</td>
+      </tr>
+      <tr>
+          <td>seniorCitizen</td>
+          <td>是否为老年人</td>
+          <td>✔️ 是</td>
+      </tr>
+      <tr>
+          <td>paperlessBilling</td>
+          <td>是否使用电子账单</td>
+          <td>✔️ 是</td>
+      </tr>
+      <tr>
+          <td>multipleLines</td>
+          <td>是否开通多线路</td>
+          <td>✔️ 是</td>
+      </tr>
+      <tr>
+          <td>streamingTV</td>
+          <td>是否使用 TV 串流服务</td>
+          <td>✔️ 是</td>
+      </tr>
+      <tr>
+          <td>streamingMovies</td>
+          <td>是否看电影串流服务</td>
+          <td>✔️ 是</td>
+      </tr>
+  </tbody>
+</table></div>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">sp_internet_dsl</span><span class="o">.</span><span class="n">survival_function_at_times</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">10</span><span class="p">)))</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>输出如下：</p>
+<div class="table-wrapper"><table>
+  <thead>
+      <tr>
+          <th><strong>时间（月）</strong></th>
+          <th><strong>生存概率（DSL）</strong></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>0</td>
+          <td>1.000000</td>
+      </tr>
+      <tr>
+          <td>1</td>
+          <td>0.902698</td>
+      </tr>
+      <tr>
+          <td>2</td>
+          <td>0.864380</td>
+      </tr>
+      <tr>
+          <td>3</td>
+          <td>0.834702</td>
+      </tr>
+      <tr>
+          <td>4</td>
+          <td>0.810522</td>
+      </tr>
+      <tr>
+          <td>5</td>
+          <td>0.794352</td>
+      </tr>
+      <tr>
+          <td>6</td>
+          <td>0.783900</td>
+      </tr>
+      <tr>
+          <td>7</td>
+          <td>0.776362</td>
+      </tr>
+      <tr>
+          <td>8</td>
+          <td>0.768486</td>
+      </tr>
+      <tr>
+          <td>9</td>
+          <td>0.750833</td>
+      </tr>
+  </tbody>
+</table></div>
+<p><strong>生存函数</strong>表示：在第 <strong>t</strong> 月仍“存活”（即未流失）的客户比例；</p>
+<ul>
+<li>对 DSL 用户来说，流失率在前几个月下降较快，说明早期是关键时段；</li>
+<li>到第 9 个月，约有<strong>75% 的 DSL 用户仍然在网</strong> <strong>。</strong></li>
+</ul>
+<hr>
+<h3 id="第三步cox-比例风险模型分析">第三步：Cox 比例风险模型分析
+</h3><h4 id="分析目的-2">分析目的
+</h4><p>利用 Cox 模型识别影响客户流失风险的重要因素，量化其对风险的影响方向和强度，建立对客户流失风险进行定量评估的基础模型。</p>
+<p><strong>$\text{Hazard Ratio } h(t) = h_0(t) \cdot e^{\beta_1 x_1 + \beta_2 x_2 + \cdots + \beta_p x_p}$</strong></p>
+<div class="table-wrapper"><table>
+  <thead>
+      <tr>
+          <th><strong>项</strong></th>
+          <th><strong>含义</strong></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>$h(t)$</strong></td>
+          <td>某人在 t 时间点的风险率</td>
+      </tr>
+      <tr>
+          <td><strong>$h_0(t)$</strong></td>
+          <td>基准风险（baseline hazard）——当所有变量为 baseline 值时的风险</td>
+      </tr>
+      <tr>
+          <td><strong>$\beta_i$</strong></td>
+          <td>第 i 个变量对应的系数（由模型训练得到）</td>
+      </tr>
+      <tr>
+          <td><strong>$x_i$</strong></td>
+          <td>第 i 个变量的数值（是否是 baseline）</td>
+      </tr>
+  </tbody>
+</table></div>
+<hr>
+<p>这代表模型在计算其他组的风险时，都是<strong>以这些值为参考组</strong>（HR = 1.0）进行比较的。</p>
+<p>Cox 比例风险模型的核心假设是：<strong>协变量对风险的影响在时间上保持恒定</strong>，即“比例风险假设”。这意味着不同组之间的风险比（Hazard Ratio）不会随着时间推移而改变，而是维持一个固定倍数。风险函数可分解为：一个随时间变化的<strong>基准风险（baseline hazard）</strong> × 一个随协变量变化、但与时间无关的<strong>部分风险（partial hazard）</strong>。</p>
+<h4 id="主要分析步骤与结果-1">主要分析步骤与结果
+</h4><hr>
+<ol>
+<li><strong>数据准备</strong>：基于第二步构建的清洗后客户数据表（silver_monthly_customers），选取 <code>tenure</code>（服务时间）作为生存时间变量，<code>churn</code>（流失标记）作为事件变量。</li>
+<li><strong>变量筛选与编码</strong>：</li>
+</ol>
+<ul>
+<li>纳入多个分类变量（如 <code>contract</code>, <code>paymentMethod</code>, <code>internetService</code>, <code>paperlessBilling</code> 等）；</li>
+<li>使用 One-Hot 编码处理分类变量，确保变量可用于模型计算。<strong>Cox 模型只接受数值型变量，因此在使用 <strong>lifelines.CoxPHFitter</strong> 拟合模型前，</strong> <strong>必须将类别型变量转化为哑变量（dummy variables）</strong> <strong>。</strong></li>
+</ul>
+<ol start="3">
+<li>
+<p><strong>拟合 Cox 比例风险模型</strong>：</p>
+<ul>
+<li>使用 Lifelines 库中的 <code>CoxPHFitter</code> 进行模型拟合；</li>
+<li>输出每个协变量的 <code>coef</code>（回归系数）、<code>exp(coef)</code>（风险比）及 <code>P 值</code>。</li>
+</ul>
+<p>使用 Cox 比例风险模型对客户流失进行了建模，所有变量的 <strong>p</strong> 值均小于 0.005，具备统计显著性。系数估计的置信区间未跨越 1，说明模型稳定性良好。以 <strong>internetService_DSL</strong> 为例，风险比为 0.80，表明使用 DSL 的客户流失风险较基准组低 20%。模型评估指标如 C-index 和对数似然比也支持模型拟合效果良好。</p>
+</li>
+<li>
+<p><strong>模型诊断</strong>：检验比例风险假设成立性、模型拟合优度以及变量显著性。</p>
+<p>在使用 cph.check_assumptions() 对 Cox 模型进行比例风险假设检验后发现，<strong>dependents_Yes</strong> 满足假设，而 <strong>internetService_DSL</strong>、<strong>onlineBackup_Yes</strong> 和 <strong>techSupport_Yes</strong> 的 p 值均小于 0.005，显著违反比例风险假设。Lifelines 建议对这些变量使用 <strong>strata</strong> 参数进行分层建模，以消除变量对风险比随时间变化的影响，增强模型的稳健性。</p>
+</li>
+<li>
+<p><strong>特征选择</strong>：包括合同类型、支付方式、互联网服务、电子账单等。</p>
+<p>使用 Schoenfeld 残差图对 Cox 模型中变量的比例风险假设进行了可视化验证。结果显示：<strong>internetService_DSL</strong>, <strong>onlineBackup_Yes</strong>, 和 <strong>techSupport_Yes</strong> 这三个变量在残差图中呈现明显随时间变化的趋势，违反比例风险假设。而 <strong>dependents_Yes</strong> 线条较为平稳，符合假设。为此，建议在重新拟合 Cox 模型时将上述三个变量加入 <strong>strata</strong> 参数进行分层建模，以增强模型稳健性并控制风险比随时间变化带来的偏差。</p>
+<p>通过 log-log 转换后的 Kaplan-Meier 生存曲线进一步验证比例风险假设。分析发现，除了 <strong>internetService</strong> 变量外，其余变量的 log-log 曲线大多呈平行趋势，表明它们较好地符合假设。而 <strong>internetService</strong> 在 log(time) &lt; 1 或 &gt; 3 的区间内存在明显的曲线偏离，再次证实了其不满足比例风险假设，应在建模中使用 <strong>strata</strong> 处理。</p>
+</li>
+</ol>
+<h3 id="第四步加速失效时间模型aft分析">第四步：加速失效时间模型（AFT）分析
+</h3><h4 id="分析目的-3">分析目的
+</h4><p>AFT 模型的基本思想是：<strong>不同组别的生存函数之间存在一个时间加速因子（Acceleration Factor, λ）****，而不是像 Cox 模型那样假设风险比恒定。</strong></p>
+<p><strong>$S_A(t) = S_B(\lambda t)$</strong></p>
+<ul>
+<li><strong>$S_A(t)$</strong>：组 A 的生存函数；</li>
+<li><strong>$S_B(t)$</strong>：组 B 的生存函数；</li>
+<li><strong>$\lambda$</strong>：<strong>加速因子</strong>（λ &lt; 1 表示 A 组比 B 更快“失效”，λ &gt; 1 表示更慢）。</li>
+</ul>
+<h4 id="分析步骤">分析步骤
+</h4><ol>
+<li>
+<p><strong>数据准备</strong>：使用 <code>silver_monthly_customers</code> 数据表，选取 <code>tenure</code> 作为留存时间变量，<code>churn</code> 作为事件变量；</p>
+</li>
+<li>
+<p><strong>变量编码</strong>：对 <code>contract</code>, <code>internetService</code>, <code>paperlessBilling</code> 等分类变量进行 One-Hot 编码处理；</p>
+</li>
+<li>
+<p><strong>模型拟合</strong>：使用 Lifelines 库中的 <code>AFTFitter</code> 进行加速失效时间模型训练，选用 log-normal 分布假设；</p>
+<p>模型采用对数时间下的生存函数建模结构，在对数转换回实际时间后，得出中位生存时间为 <strong>135.51</strong></p>
+</li>
+<li>
+<p><strong>结果输出</strong>：提取模型中每个变量的系数、P 值及其方向，用于解释变量对生存时间的加速或延缓作用。</p>
+<p>本次 Log-Logistic AFT 模型结果表明，所有变量均具有统计显著性，且对客户流失时间有显著的延缓作用。其中，<strong>onlineSecurity_Yes</strong>（加速因子约 10.7）、<strong>partner_Yes</strong>（2.09）和 <strong>onlineBackup_Yes</strong>（2.25）是影响最大的因素，显著延长了客户的在网时间。模型的 Concordance 指数为 0.73，优于 Cox 模型的 0.64，说明其在预测客户生命周期方面具有更高的判别能力，是在违反比例风险假设情况下的有效替代模型。</p>
+</li>
+<li>
+<p><strong>模型结果检验</strong>：在对 Log-Logistic AFT 模型进行假设检验时，通过 log-log 生存曲线图观察发现，大多数变量的曲线在图中较为平行，整体呈线性趋势，说明该模型在大体上满足 <strong>比例优势假设（Proportional Odds Assumption）</strong>，且 Log-Logistic 分布作为指定分布是合理的选择。虽然部分变量在某些时间段存在轻微偏离，但整体线性关系良好，支持我们继续采用 AFT 模型进行解释与预测。</p>
+</li>
+</ol>
+<h3 id="第五步生存概率驱动的客户价值评估">第五步：生存概率驱动的客户价值评估
+</h3><h4 id="分析目的-4">分析目的
+</h4><p>使用 Cox 比例风险模型（Cox Proportional Hazards Model）对 IBM Telco 客户流失数据进行建模，进一步估算客户生命周期价值（Customer Lifetime Value）。</p>
+<h4 id="分析步骤与方法">分析步骤与方法
+</h4><p><strong>1. 编码与数据准备（Data Preparation）</strong></p>
+<ul>
+<li>
+<p>使用 <strong>pd.get_dummies()</strong> 对分类变量进行 One-Hot 编码；</p>
+</li>
+<li>
+<p><strong>明确指定模型需要使用的变量，如 <strong>tenure</strong>, <strong>churn</strong>, <strong>internetService_DSL</strong>, <strong>onlineBackup_Yes</strong> 等；</strong></p>
+</li>
+<li>
+<p>构建 <strong>survival_pd</strong> 数据集，用于后续生存分析建模。</p>
+<p><strong>2. 拟合 Cox 比例风险模型（Fit Cox Proportional Hazards Model）</strong></p>
+</li>
+<li>
+<p><strong>使用 <strong>lifelines.CoxPHFitter()</strong> 进行建模；</strong></p>
+</li>
+<li>
+<p>指定 <strong>tenure</strong> 为时间变量，<strong>churn</strong> 为事件变量；</p>
+</li>
+<li>
+<p>模型成功拟合后，可用于预测客户留存概率。</p>
+</li>
+</ul>
+<p><strong>3. 创建交互组件（Widgets for Dashboard）</strong></p>
+<ul>
+<li>利用 <strong>dbutils.widgets</strong> 构建交互式下拉框（如是否有 TechSupport、OnlineBackup 等）；</li>
+<li>用户可动态选择变量组合，进行客户细分分析；</li>
+<li>所选值传入生存函数，用于预测分组客户的未来表现。</li>
+</ul>
+<p><strong>4. 构建仪表盘表格（Create Table for Dashboard）</strong></p>
+<ul>
+<li>
+<p>核心是 <strong>get_payback_df()</strong> 函数，输出用户每月的财务价值评估；</p>
+</li>
+<li>
+<p>包含以下重要财务列：</p>
+<ul>
+<li><strong>Survival Probability</strong> <strong>（生存概率）</strong></li>
+<li><strong>Monthly Profit for Selected Plan</strong> <strong>（假设利润，例：$30）</strong></li>
+<li><strong>Avg Expected Monthly Profit</strong> <strong>（期望月利润 = 生存概率 × 利润）</strong></li>
+<li><strong>NPV</strong>（净现值，考虑 10% 折现率）</li>
+<li><strong>Cumulative NPV</strong>（累计净现值，反映累计获利能力）</li>
+</ul>
+<p><strong>5. 可视化结果NPV和生存概率曲线</strong></p>
+</li>
+</ul>
+<p><img src="/p/image/survival_analysis/1744448365533.png"
+	width="389"
+	height="248"
+	srcset="/p/image/survival_analysis/1744448365533_hu_9fdbfe3ef711d4d0.png 480w, /p/image/survival_analysis/1744448365533_hu_beee2e016c6ab49f.png 1024w"
+	loading="lazy"
+	
+		alt="1744448365533"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="156"
+		data-flex-basis="376px"
+	
+></p>
+<p><img src="/p/image/survival_analysis/1744448389386.png"
+	width="386"
+	height="262"
+	srcset="/p/image/survival_analysis/1744448389386_hu_4e7b1b3a4b21f782.png 480w, /p/image/survival_analysis/1744448389386_hu_98085e3789953eaa.png 1024w"
+	loading="lazy"
+	
+		alt="1744448389386"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="147"
+		data-flex-basis="353px"
+	
+></p>
+<hr>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2025 Example Person
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.ec4636cef4e0d65285be09dba135ce45e9ef0553c6b763013d5e9f38b8622ab9.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

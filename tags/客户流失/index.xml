@@ -1,0 +1,481 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>客户流失 on Example Site</title>
+        <link>https://example.com/tags/%E5%AE%A2%E6%88%B7%E6%B5%81%E5%A4%B1/</link>
+        <description>Recent content in 客户流失 on Example Site</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>en</language>
+        <copyright>Example Person</copyright>
+        <lastBuildDate>Mon, 14 Apr 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://example.com/tags/%E5%AE%A2%E6%88%B7%E6%B5%81%E5%A4%B1/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>基于电信客户数据的生存分析：从建模到客户价值评估</title>
+        <link>https://example.com/p/%E5%9F%BA%E4%BA%8E%E7%94%B5%E4%BF%A1%E5%AE%A2%E6%88%B7%E6%95%B0%E6%8D%AE%E7%9A%84%E7%94%9F%E5%AD%98%E5%88%86%E6%9E%90%E4%BB%8E%E5%BB%BA%E6%A8%A1%E5%88%B0%E5%AE%A2%E6%88%B7%E4%BB%B7%E5%80%BC%E8%AF%84%E4%BC%B0/</link>
+        <pubDate>Mon, 14 Apr 2025 00:00:00 +0000</pubDate>
+        
+        <guid>https://example.com/p/%E5%9F%BA%E4%BA%8E%E7%94%B5%E4%BF%A1%E5%AE%A2%E6%88%B7%E6%95%B0%E6%8D%AE%E7%9A%84%E7%94%9F%E5%AD%98%E5%88%86%E6%9E%90%E4%BB%8E%E5%BB%BA%E6%A8%A1%E5%88%B0%E5%AE%A2%E6%88%B7%E4%BB%B7%E5%80%BC%E8%AF%84%E4%BC%B0/</guid>
+        <description>&lt;img src="https://example.com/p/%E5%9F%BA%E4%BA%8E%E7%94%B5%E4%BF%A1%E5%AE%A2%E6%88%B7%E6%95%B0%E6%8D%AE%E7%9A%84%E7%94%9F%E5%AD%98%E5%88%86%E6%9E%90%E4%BB%8E%E5%BB%BA%E6%A8%A1%E5%88%B0%E5%AE%A2%E6%88%B7%E4%BB%B7%E5%80%BC%E8%AF%84%E4%BC%B0/image.png" alt="Featured image of post 基于电信客户数据的生存分析：从建模到客户价值评估" /&gt;&lt;h2 id=&#34;生存分析报告&#34;&gt;生存分析报告
+&lt;/h2&gt;&lt;h3 id=&#34;第一步数据导入与清洗&#34;&gt;第一步：数据导入与清洗
+&lt;/h3&gt;&lt;h4 id=&#34;分析目的&#34;&gt;分析目的
+&lt;/h4&gt;&lt;p&gt;本步骤的目标是将外部电信客户数据集导入分析环境，并进行初步清洗，为后续建模提供结构规范、字段明确、无缺失值的数据源。&lt;/p&gt;
+&lt;h4 id=&#34;主要步骤与结果&#34;&gt;主要步骤与结果
+&lt;/h4&gt;&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;数据来源&lt;/strong&gt;：IBM 提供的 &amp;ldquo;Telco 客户流失数据集&amp;rdquo;，每条记录代表一位客户，包含其人口特征、服务使用信息、账单信息及是否流失等字段。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;数据加载结果&lt;/strong&gt;：
+&lt;ul&gt;
+&lt;li&gt;成功导入原始 CSV 数据；&lt;/li&gt;
+&lt;li&gt;包括 &lt;code&gt;tenure&lt;/code&gt;（服务时间）与 &lt;code&gt;churnString&lt;/code&gt;（是否流失）两个关键字段。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;数据清洗内容&lt;/strong&gt;：
+&lt;ul&gt;
+&lt;li&gt;去除 &lt;code&gt;totalCharges&lt;/code&gt; 缺失记录；&lt;/li&gt;
+&lt;li&gt;将 &lt;code&gt;churnString&lt;/code&gt; 字段转为数值型 &lt;code&gt;churn&lt;/code&gt; 字段（1 表示已流失，0 表示未流失）；&lt;/li&gt;
+&lt;li&gt;删除原始 &lt;code&gt;churnString&lt;/code&gt; 字段；&lt;/li&gt;
+&lt;li&gt;形成清洗后的 Silver 层数据表，共保留约 7032 条记录。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;输出结果&lt;/strong&gt;：结构规范、字段清晰的建模数据表 &lt;code&gt;silver_monthly_customers&lt;/code&gt;，作为后续分析基础。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;第二步kaplan-meier-生存曲线分析&#34;&gt;第二步：Kaplan-Meier 生存曲线分析
+&lt;/h3&gt;&lt;h4 id=&#34;分析目的-1&#34;&gt;分析目的
+&lt;/h4&gt;&lt;p&gt;通过 Kaplan-Meier 方法构建客户生存曲线，观察总体及分组客户的留存概率随时间的变化趋势，并用 Log-Rank 检验判断分组之间差异的统计显著性。&lt;/p&gt;
+&lt;h4 id=&#34;主要分析步骤与结果&#34;&gt;主要分析步骤与结果
+&lt;/h4&gt;&lt;p&gt;Kaplan-Meier 生存函数的估计值定义为：&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;$\hat{S}(t) = \prod_{t_i \le t} \left( 1 - \frac{d_i}{n_i} \right)$&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;其中：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;$t_i$&lt;/strong&gt;：发生事件的时间点（按时间顺序排列）；&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;$d_i$&lt;/strong&gt;：在时间 &lt;strong&gt;t_i&lt;/strong&gt; 发生事件的个数；&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;$n_i$&lt;/strong&gt;：在时间 &lt;strong&gt;t_i&lt;/strong&gt; 之前&lt;strong&gt;仍处于风险中&lt;/strong&gt;的个体数（即还没失踪，也没发生事件的人）；&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;$\hat{S}(t)$&lt;/strong&gt;：在时间 &lt;strong&gt;t&lt;/strong&gt; 仍“存活”（事件未发生）的概率。
+&lt;img src=&#34;https://example.com/p/%E5%9F%BA%E4%BA%8E%E7%94%B5%E4%BF%A1%E5%AE%A2%E6%88%B7%E6%95%B0%E6%8D%AE%E7%9A%84%E7%94%9F%E5%AD%98%E5%88%86%E6%9E%90%E4%BB%8E%E5%BB%BA%E6%A8%A1%E5%88%B0%E5%AE%A2%E6%88%B7%E4%BB%B7%E5%80%BC%E8%AF%84%E4%BC%B0/image/survival_analysis/1744441021100.png&#34;
+	width=&#34;372&#34;
+	height=&#34;278&#34;
+	srcset=&#34;https://example.com/p/%E5%9F%BA%E4%BA%8E%E7%94%B5%E4%BF%A1%E5%AE%A2%E6%88%B7%E6%95%B0%E6%8D%AE%E7%9A%84%E7%94%9F%E5%AD%98%E5%88%86%E6%9E%90%E4%BB%8E%E5%BB%BA%E6%A8%A1%E5%88%B0%E5%AE%A2%E6%88%B7%E4%BB%B7%E5%80%BC%E8%AF%84%E4%BC%B0/image/survival_analysis/1744441021100_hu_fd344d256fe3c35e.png 480w, https://example.com/p/%E5%9F%BA%E4%BA%8E%E7%94%B5%E4%BF%A1%E5%AE%A2%E6%88%B7%E6%95%B0%E6%8D%AE%E7%9A%84%E7%94%9F%E5%AD%98%E5%88%86%E6%9E%90%E4%BB%8E%E5%BB%BA%E6%A8%A1%E5%88%B0%E5%AE%A2%E6%88%B7%E4%BB%B7%E5%80%BC%E8%AF%84%E4%BC%B0/image/survival_analysis/1744441021100_hu_7875603229138091.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;1744441021100&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;133&#34;
+		data-flex-basis=&#34;321px&#34;
+	
+&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;横轴（x-axis）&lt;/strong&gt;：表示时间（即客户与公司的关系持续了多久，单位：月）；&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;纵轴（y-axis）&lt;/strong&gt;：表示“还没流失的概率”，也就是 &lt;strong&gt;生存概率&lt;/strong&gt;S(t)&lt;strong&gt;。&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;“协变量层级的 Kaplan-Meier 曲线”指的是&lt;strong&gt;分组后的生存曲线&lt;/strong&gt;，例如按性别、付款方式、是否使用 Online Security 这种特征划分。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;如果两组生存曲线差异大 → 说明这个变量对生存概率有影响；&lt;/li&gt;
+&lt;li&gt;差异小（曲线几乎重合） → 说明这个变量的预测能力弱。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;当肉眼看到曲线差不多时，还要通过统计检验来确认 → 就用 &lt;strong&gt;log-rank test（对数秩检验）&lt;/strong&gt;。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;原假设 H₀&lt;/strong&gt;：两个组生存曲线无显著差异；&lt;/li&gt;
+&lt;li&gt;如果 p-value &amp;gt; 0.05 → 保留原假设 → 差异不显著；&lt;/li&gt;
+&lt;li&gt;如果 p-value &amp;lt; 0.05 → 拒绝原假设 → 差异显著。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src=&#34;https://example.com/p/%E5%9F%BA%E4%BA%8E%E7%94%B5%E4%BF%A1%E5%AE%A2%E6%88%B7%E6%95%B0%E6%8D%AE%E7%9A%84%E7%94%9F%E5%AD%98%E5%88%86%E6%9E%90%E4%BB%8E%E5%BB%BA%E6%A8%A1%E5%88%B0%E5%AE%A2%E6%88%B7%E4%BB%B7%E5%80%BC%E8%AF%84%E4%BC%B0/image/survival_analysis/1744441554516.png&#34;
+	width=&#34;372&#34;
+	height=&#34;262&#34;
+	srcset=&#34;https://example.com/p/%E5%9F%BA%E4%BA%8E%E7%94%B5%E4%BF%A1%E5%AE%A2%E6%88%B7%E6%95%B0%E6%8D%AE%E7%9A%84%E7%94%9F%E5%AD%98%E5%88%86%E6%9E%90%E4%BB%8E%E5%BB%BA%E6%A8%A1%E5%88%B0%E5%AE%A2%E6%88%B7%E4%BB%B7%E5%80%BC%E8%AF%84%E4%BC%B0/image/survival_analysis/1744441554516_hu_3a2001cdba22f899.png 480w, https://example.com/p/%E5%9F%BA%E4%BA%8E%E7%94%B5%E4%BF%A1%E5%AE%A2%E6%88%B7%E6%95%B0%E6%8D%AE%E7%9A%84%E7%94%9F%E5%AD%98%E5%88%86%E6%9E%90%E4%BB%8E%E5%BB%BA%E6%A8%A1%E5%88%B0%E5%AE%A2%E6%88%B7%E4%BB%B7%E5%80%BC%E8%AF%84%E4%BC%B0/image/survival_analysis/1744441554516_hu_8323b0de83d7f5d9.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;1744441554516&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;141&#34;
+		data-flex-basis=&#34;340px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h3 id=&#34;性别对客户流失的影响&#34;&gt;性别对客户流失的影响
+&lt;/h3&gt;&lt;table&gt;
+  &lt;thead&gt;
+      &lt;tr&gt;
+          &lt;th&gt;性别组别&lt;/th&gt;
+          &lt;th&gt;对比组别&lt;/th&gt;
+          &lt;th&gt;检验统计量 (test_statistic)&lt;/th&gt;
+          &lt;th&gt;p 值 (p)&lt;/th&gt;
+          &lt;th&gt;-log2(p)&lt;/th&gt;
+      &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+      &lt;tr&gt;
+          &lt;td&gt;Female&lt;/td&gt;
+          &lt;td&gt;Male&lt;/td&gt;
+          &lt;td&gt;1.61011&lt;/td&gt;
+          &lt;td&gt;0.204476&lt;/td&gt;
+          &lt;td&gt;2.289995&lt;/td&gt;
+      &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;strong&gt;结论&lt;/strong&gt;：p 值 &amp;gt; 0.05，说明性别对客户流失没有统计显著性差异。&lt;br&gt;
+&lt;strong&gt;性别不是客户流失的重要影响因素&lt;/strong&gt;。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://example.com/p/%E5%9F%BA%E4%BA%8E%E7%94%B5%E4%BF%A1%E5%AE%A2%E6%88%B7%E6%95%B0%E6%8D%AE%E7%9A%84%E7%94%9F%E5%AD%98%E5%88%86%E6%9E%90%E4%BB%8E%E5%BB%BA%E6%A8%A1%E5%88%B0%E5%AE%A2%E6%88%B7%E4%BB%B7%E5%80%BC%E8%AF%84%E4%BC%B0/image/survival_analysis/1744441670706.png&#34;
+	width=&#34;372&#34;
+	height=&#34;262&#34;
+	srcset=&#34;https://example.com/p/%E5%9F%BA%E4%BA%8E%E7%94%B5%E4%BF%A1%E5%AE%A2%E6%88%B7%E6%95%B0%E6%8D%AE%E7%9A%84%E7%94%9F%E5%AD%98%E5%88%86%E6%9E%90%E4%BB%8E%E5%BB%BA%E6%A8%A1%E5%88%B0%E5%AE%A2%E6%88%B7%E4%BB%B7%E5%80%BC%E8%AF%84%E4%BC%B0/image/survival_analysis/1744441670706_hu_e4489294271c7475.png 480w, https://example.com/p/%E5%9F%BA%E4%BA%8E%E7%94%B5%E4%BF%A1%E5%AE%A2%E6%88%B7%E6%95%B0%E6%8D%AE%E7%9A%84%E7%94%9F%E5%AD%98%E5%88%86%E6%9E%90%E4%BB%8E%E5%BB%BA%E6%A8%A1%E5%88%B0%E5%AE%A2%E6%88%B7%E4%BB%B7%E5%80%BC%E8%AF%84%E4%BC%B0/image/survival_analysis/1744441670706_hu_52fc508e57fea6f8.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;性别影响图&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;141&#34;
+		data-flex-basis=&#34;340px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;是否启用在线安全服务对客户流失的影响&#34;&gt;是否启用在线安全服务对客户流失的影响
+&lt;/h3&gt;&lt;table&gt;
+  &lt;thead&gt;
+      &lt;tr&gt;
+          &lt;th&gt;是否启用在线安全服务&lt;/th&gt;
+          &lt;th&gt;对比组别&lt;/th&gt;
+          &lt;th&gt;检验统计量 (test_statistic)&lt;/th&gt;
+          &lt;th&gt;p 值 (p)&lt;/th&gt;
+          &lt;th&gt;-log2(p)&lt;/th&gt;
+      &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+      &lt;tr&gt;
+          &lt;td&gt;No&lt;/td&gt;
+          &lt;td&gt;Yes&lt;/td&gt;
+          &lt;td&gt;75.800079&lt;/td&gt;
+          &lt;td&gt;3.138886e-18&lt;/td&gt;
+          &lt;td&gt;58.144453&lt;/td&gt;
+      &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;strong&gt;结论&lt;/strong&gt;：p 值 &amp;lt; 0.05，说明是否启用在线安全服务对客户流失具有统计显著性差异。&lt;br&gt;
+&lt;strong&gt;启用在线安全服务显著降低了客户流失风险&lt;/strong&gt;。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;onlineSecurity 很可能是显著的影响因素。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;除了 phoneService 和 gender，其余协变量在 Log-rank 检验中均表现出显著的生存曲线差异（p &amp;lt; 0.05）&lt;/strong&gt; &lt;strong&gt;，即它们对客户流失具有统计意义上的影响。&lt;/strong&gt;&lt;/p&gt;
+&lt;table&gt;
+  &lt;thead&gt;
+      &lt;tr&gt;
+          &lt;th&gt;&lt;strong&gt;协变量（变量名）&lt;/strong&gt;&lt;/th&gt;
+          &lt;th&gt;&lt;strong&gt;含义简述&lt;/strong&gt;&lt;/th&gt;
+          &lt;th&gt;&lt;strong&gt;显著性&lt;/strong&gt;&lt;/th&gt;
+      &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+      &lt;tr&gt;
+          &lt;td&gt;gender&lt;/td&gt;
+          &lt;td&gt;性别&lt;/td&gt;
+          &lt;td&gt;❌ 否&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;phoneService&lt;/td&gt;
+          &lt;td&gt;是否有电话服务&lt;/td&gt;
+          &lt;td&gt;❌ 否&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;internetService&lt;/td&gt;
+          &lt;td&gt;上网服务类型（DSL/Fiber等）&lt;/td&gt;
+          &lt;td&gt;✔️ 是&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;paymentMethod&lt;/td&gt;
+          &lt;td&gt;付款方式&lt;/td&gt;
+          &lt;td&gt;✔️ 是&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;techSupport&lt;/td&gt;
+          &lt;td&gt;是否启用技术支持&lt;/td&gt;
+          &lt;td&gt;✔️ 是&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;onlineSecurity&lt;/td&gt;
+          &lt;td&gt;是否启用在线安全服务&lt;/td&gt;
+          &lt;td&gt;✔️ 是&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;onlineBackup&lt;/td&gt;
+          &lt;td&gt;是否启用在线备份&lt;/td&gt;
+          &lt;td&gt;✔️ 是&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;deviceProtection&lt;/td&gt;
+          &lt;td&gt;是否启用设备保护&lt;/td&gt;
+          &lt;td&gt;✔️ 是&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;partner&lt;/td&gt;
+          &lt;td&gt;是否有配偶&lt;/td&gt;
+          &lt;td&gt;✔️ 是&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;dependents&lt;/td&gt;
+          &lt;td&gt;是否有家属&lt;/td&gt;
+          &lt;td&gt;✔️ 是&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;seniorCitizen&lt;/td&gt;
+          &lt;td&gt;是否为老年人&lt;/td&gt;
+          &lt;td&gt;✔️ 是&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;paperlessBilling&lt;/td&gt;
+          &lt;td&gt;是否使用电子账单&lt;/td&gt;
+          &lt;td&gt;✔️ 是&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;multipleLines&lt;/td&gt;
+          &lt;td&gt;是否开通多线路&lt;/td&gt;
+          &lt;td&gt;✔️ 是&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;streamingTV&lt;/td&gt;
+          &lt;td&gt;是否使用 TV 串流服务&lt;/td&gt;
+          &lt;td&gt;✔️ 是&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;streamingMovies&lt;/td&gt;
+          &lt;td&gt;是否看电影串流服务&lt;/td&gt;
+          &lt;td&gt;✔️ 是&lt;/td&gt;
+      &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;pd&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;DataFrame&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;sp_internet_dsl&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;survival_function_at_times&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;range&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;10&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)))&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;输出如下：&lt;/p&gt;
+&lt;table&gt;
+  &lt;thead&gt;
+      &lt;tr&gt;
+          &lt;th&gt;&lt;strong&gt;时间（月）&lt;/strong&gt;&lt;/th&gt;
+          &lt;th&gt;&lt;strong&gt;生存概率（DSL）&lt;/strong&gt;&lt;/th&gt;
+      &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+      &lt;tr&gt;
+          &lt;td&gt;0&lt;/td&gt;
+          &lt;td&gt;1.000000&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;1&lt;/td&gt;
+          &lt;td&gt;0.902698&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;2&lt;/td&gt;
+          &lt;td&gt;0.864380&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;3&lt;/td&gt;
+          &lt;td&gt;0.834702&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;4&lt;/td&gt;
+          &lt;td&gt;0.810522&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;5&lt;/td&gt;
+          &lt;td&gt;0.794352&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;6&lt;/td&gt;
+          &lt;td&gt;0.783900&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;7&lt;/td&gt;
+          &lt;td&gt;0.776362&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;8&lt;/td&gt;
+          &lt;td&gt;0.768486&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;9&lt;/td&gt;
+          &lt;td&gt;0.750833&lt;/td&gt;
+      &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;strong&gt;生存函数&lt;/strong&gt;表示：在第 &lt;strong&gt;t&lt;/strong&gt; 月仍“存活”（即未流失）的客户比例；&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;对 DSL 用户来说，流失率在前几个月下降较快，说明早期是关键时段；&lt;/li&gt;
+&lt;li&gt;到第 9 个月，约有&lt;strong&gt;75% 的 DSL 用户仍然在网&lt;/strong&gt; &lt;strong&gt;。&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;第三步cox-比例风险模型分析&#34;&gt;第三步：Cox 比例风险模型分析
+&lt;/h3&gt;&lt;h4 id=&#34;分析目的-2&#34;&gt;分析目的
+&lt;/h4&gt;&lt;p&gt;利用 Cox 模型识别影响客户流失风险的重要因素，量化其对风险的影响方向和强度，建立对客户流失风险进行定量评估的基础模型。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;$\text{Hazard Ratio } h(t) = h_0(t) \cdot e^{\beta_1 x_1 + \beta_2 x_2 + \cdots + \beta_p x_p}$&lt;/strong&gt;&lt;/p&gt;
+&lt;table&gt;
+  &lt;thead&gt;
+      &lt;tr&gt;
+          &lt;th&gt;&lt;strong&gt;项&lt;/strong&gt;&lt;/th&gt;
+          &lt;th&gt;&lt;strong&gt;含义&lt;/strong&gt;&lt;/th&gt;
+      &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+      &lt;tr&gt;
+          &lt;td&gt;&lt;strong&gt;$h(t)$&lt;/strong&gt;&lt;/td&gt;
+          &lt;td&gt;某人在 t 时间点的风险率&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;&lt;strong&gt;$h_0(t)$&lt;/strong&gt;&lt;/td&gt;
+          &lt;td&gt;基准风险（baseline hazard）——当所有变量为 baseline 值时的风险&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;&lt;strong&gt;$\beta_i$&lt;/strong&gt;&lt;/td&gt;
+          &lt;td&gt;第 i 个变量对应的系数（由模型训练得到）&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;&lt;strong&gt;$x_i$&lt;/strong&gt;&lt;/td&gt;
+          &lt;td&gt;第 i 个变量的数值（是否是 baseline）&lt;/td&gt;
+      &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;hr&gt;
+&lt;p&gt;这代表模型在计算其他组的风险时，都是&lt;strong&gt;以这些值为参考组&lt;/strong&gt;（HR = 1.0）进行比较的。&lt;/p&gt;
+&lt;p&gt;Cox 比例风险模型的核心假设是：&lt;strong&gt;协变量对风险的影响在时间上保持恒定&lt;/strong&gt;，即“比例风险假设”。这意味着不同组之间的风险比（Hazard Ratio）不会随着时间推移而改变，而是维持一个固定倍数。风险函数可分解为：一个随时间变化的&lt;strong&gt;基准风险（baseline hazard）&lt;/strong&gt; × 一个随协变量变化、但与时间无关的&lt;strong&gt;部分风险（partial hazard）&lt;/strong&gt;。&lt;/p&gt;
+&lt;h4 id=&#34;主要分析步骤与结果-1&#34;&gt;主要分析步骤与结果
+&lt;/h4&gt;&lt;hr&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;数据准备&lt;/strong&gt;：基于第二步构建的清洗后客户数据表（silver_monthly_customers），选取 &lt;code&gt;tenure&lt;/code&gt;（服务时间）作为生存时间变量，&lt;code&gt;churn&lt;/code&gt;（流失标记）作为事件变量。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;变量筛选与编码&lt;/strong&gt;：&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;纳入多个分类变量（如 &lt;code&gt;contract&lt;/code&gt;, &lt;code&gt;paymentMethod&lt;/code&gt;, &lt;code&gt;internetService&lt;/code&gt;, &lt;code&gt;paperlessBilling&lt;/code&gt; 等）；&lt;/li&gt;
+&lt;li&gt;使用 One-Hot 编码处理分类变量，确保变量可用于模型计算。&lt;strong&gt;Cox 模型只接受数值型变量，因此在使用 &lt;strong&gt;lifelines.CoxPHFitter&lt;/strong&gt; 拟合模型前，&lt;/strong&gt; &lt;strong&gt;必须将类别型变量转化为哑变量（dummy variables）&lt;/strong&gt; &lt;strong&gt;。&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ol start=&#34;3&#34;&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;拟合 Cox 比例风险模型&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;使用 Lifelines 库中的 &lt;code&gt;CoxPHFitter&lt;/code&gt; 进行模型拟合；&lt;/li&gt;
+&lt;li&gt;输出每个协变量的 &lt;code&gt;coef&lt;/code&gt;（回归系数）、&lt;code&gt;exp(coef)&lt;/code&gt;（风险比）及 &lt;code&gt;P 值&lt;/code&gt;。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;使用 Cox 比例风险模型对客户流失进行了建模，所有变量的 &lt;strong&gt;p&lt;/strong&gt; 值均小于 0.005，具备统计显著性。系数估计的置信区间未跨越 1，说明模型稳定性良好。以 &lt;strong&gt;internetService_DSL&lt;/strong&gt; 为例，风险比为 0.80，表明使用 DSL 的客户流失风险较基准组低 20%。模型评估指标如 C-index 和对数似然比也支持模型拟合效果良好。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;模型诊断&lt;/strong&gt;：检验比例风险假设成立性、模型拟合优度以及变量显著性。&lt;/p&gt;
+&lt;p&gt;在使用 cph.check_assumptions() 对 Cox 模型进行比例风险假设检验后发现，&lt;strong&gt;dependents_Yes&lt;/strong&gt; 满足假设，而 &lt;strong&gt;internetService_DSL&lt;/strong&gt;、&lt;strong&gt;onlineBackup_Yes&lt;/strong&gt; 和 &lt;strong&gt;techSupport_Yes&lt;/strong&gt; 的 p 值均小于 0.005，显著违反比例风险假设。Lifelines 建议对这些变量使用 &lt;strong&gt;strata&lt;/strong&gt; 参数进行分层建模，以消除变量对风险比随时间变化的影响，增强模型的稳健性。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;特征选择&lt;/strong&gt;：包括合同类型、支付方式、互联网服务、电子账单等。&lt;/p&gt;
+&lt;p&gt;使用 Schoenfeld 残差图对 Cox 模型中变量的比例风险假设进行了可视化验证。结果显示：&lt;strong&gt;internetService_DSL&lt;/strong&gt;, &lt;strong&gt;onlineBackup_Yes&lt;/strong&gt;, 和 &lt;strong&gt;techSupport_Yes&lt;/strong&gt; 这三个变量在残差图中呈现明显随时间变化的趋势，违反比例风险假设。而 &lt;strong&gt;dependents_Yes&lt;/strong&gt; 线条较为平稳，符合假设。为此，建议在重新拟合 Cox 模型时将上述三个变量加入 &lt;strong&gt;strata&lt;/strong&gt; 参数进行分层建模，以增强模型稳健性并控制风险比随时间变化带来的偏差。&lt;/p&gt;
+&lt;p&gt;通过 log-log 转换后的 Kaplan-Meier 生存曲线进一步验证比例风险假设。分析发现，除了 &lt;strong&gt;internetService&lt;/strong&gt; 变量外，其余变量的 log-log 曲线大多呈平行趋势，表明它们较好地符合假设。而 &lt;strong&gt;internetService&lt;/strong&gt; 在 log(time) &amp;lt; 1 或 &amp;gt; 3 的区间内存在明显的曲线偏离，再次证实了其不满足比例风险假设，应在建模中使用 &lt;strong&gt;strata&lt;/strong&gt; 处理。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;第四步加速失效时间模型aft分析&#34;&gt;第四步：加速失效时间模型（AFT）分析
+&lt;/h3&gt;&lt;h4 id=&#34;分析目的-3&#34;&gt;分析目的
+&lt;/h4&gt;&lt;p&gt;AFT 模型的基本思想是：&lt;strong&gt;不同组别的生存函数之间存在一个时间加速因子（Acceleration Factor, λ）****，而不是像 Cox 模型那样假设风险比恒定。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;$S_A(t) = S_B(\lambda t)$&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;$S_A(t)$&lt;/strong&gt;：组 A 的生存函数；&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;$S_B(t)$&lt;/strong&gt;：组 B 的生存函数；&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;$\lambda$&lt;/strong&gt;：&lt;strong&gt;加速因子&lt;/strong&gt;（λ &amp;lt; 1 表示 A 组比 B 更快“失效”，λ &amp;gt; 1 表示更慢）。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;分析步骤&#34;&gt;分析步骤
+&lt;/h4&gt;&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;数据准备&lt;/strong&gt;：使用 &lt;code&gt;silver_monthly_customers&lt;/code&gt; 数据表，选取 &lt;code&gt;tenure&lt;/code&gt; 作为留存时间变量，&lt;code&gt;churn&lt;/code&gt; 作为事件变量；&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;变量编码&lt;/strong&gt;：对 &lt;code&gt;contract&lt;/code&gt;, &lt;code&gt;internetService&lt;/code&gt;, &lt;code&gt;paperlessBilling&lt;/code&gt; 等分类变量进行 One-Hot 编码处理；&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;模型拟合&lt;/strong&gt;：使用 Lifelines 库中的 &lt;code&gt;AFTFitter&lt;/code&gt; 进行加速失效时间模型训练，选用 log-normal 分布假设；&lt;/p&gt;
+&lt;p&gt;模型采用对数时间下的生存函数建模结构，在对数转换回实际时间后，得出中位生存时间为 &lt;strong&gt;135.51&lt;/strong&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;结果输出&lt;/strong&gt;：提取模型中每个变量的系数、P 值及其方向，用于解释变量对生存时间的加速或延缓作用。&lt;/p&gt;
+&lt;p&gt;本次 Log-Logistic AFT 模型结果表明，所有变量均具有统计显著性，且对客户流失时间有显著的延缓作用。其中，&lt;strong&gt;onlineSecurity_Yes&lt;/strong&gt;（加速因子约 10.7）、&lt;strong&gt;partner_Yes&lt;/strong&gt;（2.09）和 &lt;strong&gt;onlineBackup_Yes&lt;/strong&gt;（2.25）是影响最大的因素，显著延长了客户的在网时间。模型的 Concordance 指数为 0.73，优于 Cox 模型的 0.64，说明其在预测客户生命周期方面具有更高的判别能力，是在违反比例风险假设情况下的有效替代模型。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;模型结果检验&lt;/strong&gt;：在对 Log-Logistic AFT 模型进行假设检验时，通过 log-log 生存曲线图观察发现，大多数变量的曲线在图中较为平行，整体呈线性趋势，说明该模型在大体上满足 &lt;strong&gt;比例优势假设（Proportional Odds Assumption）&lt;/strong&gt;，且 Log-Logistic 分布作为指定分布是合理的选择。虽然部分变量在某些时间段存在轻微偏离，但整体线性关系良好，支持我们继续采用 AFT 模型进行解释与预测。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;第五步生存概率驱动的客户价值评估&#34;&gt;第五步：生存概率驱动的客户价值评估
+&lt;/h3&gt;&lt;h4 id=&#34;分析目的-4&#34;&gt;分析目的
+&lt;/h4&gt;&lt;p&gt;使用 Cox 比例风险模型（Cox Proportional Hazards Model）对 IBM Telco 客户流失数据进行建模，进一步估算客户生命周期价值（Customer Lifetime Value）。&lt;/p&gt;
+&lt;h4 id=&#34;分析步骤与方法&#34;&gt;分析步骤与方法
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;1. 编码与数据准备（Data Preparation）&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;使用 &lt;strong&gt;pd.get_dummies()&lt;/strong&gt; 对分类变量进行 One-Hot 编码；&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;明确指定模型需要使用的变量，如 &lt;strong&gt;tenure&lt;/strong&gt;, &lt;strong&gt;churn&lt;/strong&gt;, &lt;strong&gt;internetService_DSL&lt;/strong&gt;, &lt;strong&gt;onlineBackup_Yes&lt;/strong&gt; 等；&lt;/strong&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;构建 &lt;strong&gt;survival_pd&lt;/strong&gt; 数据集，用于后续生存分析建模。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;2. 拟合 Cox 比例风险模型（Fit Cox Proportional Hazards Model）&lt;/strong&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;使用 &lt;strong&gt;lifelines.CoxPHFitter()&lt;/strong&gt; 进行建模；&lt;/strong&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;指定 &lt;strong&gt;tenure&lt;/strong&gt; 为时间变量，&lt;strong&gt;churn&lt;/strong&gt; 为事件变量；&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;模型成功拟合后，可用于预测客户留存概率。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;3. 创建交互组件（Widgets for Dashboard）&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;利用 &lt;strong&gt;dbutils.widgets&lt;/strong&gt; 构建交互式下拉框（如是否有 TechSupport、OnlineBackup 等）；&lt;/li&gt;
+&lt;li&gt;用户可动态选择变量组合，进行客户细分分析；&lt;/li&gt;
+&lt;li&gt;所选值传入生存函数，用于预测分组客户的未来表现。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;4. 构建仪表盘表格（Create Table for Dashboard）&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;核心是 &lt;strong&gt;get_payback_df()&lt;/strong&gt; 函数，输出用户每月的财务价值评估；&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;包含以下重要财务列：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Survival Probability&lt;/strong&gt; &lt;strong&gt;（生存概率）&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Monthly Profit for Selected Plan&lt;/strong&gt; &lt;strong&gt;（假设利润，例：$30）&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Avg Expected Monthly Profit&lt;/strong&gt; &lt;strong&gt;（期望月利润 = 生存概率 × 利润）&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;NPV&lt;/strong&gt;（净现值，考虑 10% 折现率）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Cumulative NPV&lt;/strong&gt;（累计净现值，反映累计获利能力）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;5. 可视化结果NPV和生存概率曲线&lt;/strong&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src=&#34;https://example.com/p/%E5%9F%BA%E4%BA%8E%E7%94%B5%E4%BF%A1%E5%AE%A2%E6%88%B7%E6%95%B0%E6%8D%AE%E7%9A%84%E7%94%9F%E5%AD%98%E5%88%86%E6%9E%90%E4%BB%8E%E5%BB%BA%E6%A8%A1%E5%88%B0%E5%AE%A2%E6%88%B7%E4%BB%B7%E5%80%BC%E8%AF%84%E4%BC%B0/image/survival_analysis/1744448365533.png&#34;
+	width=&#34;389&#34;
+	height=&#34;248&#34;
+	srcset=&#34;https://example.com/p/%E5%9F%BA%E4%BA%8E%E7%94%B5%E4%BF%A1%E5%AE%A2%E6%88%B7%E6%95%B0%E6%8D%AE%E7%9A%84%E7%94%9F%E5%AD%98%E5%88%86%E6%9E%90%E4%BB%8E%E5%BB%BA%E6%A8%A1%E5%88%B0%E5%AE%A2%E6%88%B7%E4%BB%B7%E5%80%BC%E8%AF%84%E4%BC%B0/image/survival_analysis/1744448365533_hu_9fdbfe3ef711d4d0.png 480w, https://example.com/p/%E5%9F%BA%E4%BA%8E%E7%94%B5%E4%BF%A1%E5%AE%A2%E6%88%B7%E6%95%B0%E6%8D%AE%E7%9A%84%E7%94%9F%E5%AD%98%E5%88%86%E6%9E%90%E4%BB%8E%E5%BB%BA%E6%A8%A1%E5%88%B0%E5%AE%A2%E6%88%B7%E4%BB%B7%E5%80%BC%E8%AF%84%E4%BC%B0/image/survival_analysis/1744448365533_hu_beee2e016c6ab49f.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;1744448365533&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;156&#34;
+		data-flex-basis=&#34;376px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://example.com/p/%E5%9F%BA%E4%BA%8E%E7%94%B5%E4%BF%A1%E5%AE%A2%E6%88%B7%E6%95%B0%E6%8D%AE%E7%9A%84%E7%94%9F%E5%AD%98%E5%88%86%E6%9E%90%E4%BB%8E%E5%BB%BA%E6%A8%A1%E5%88%B0%E5%AE%A2%E6%88%B7%E4%BB%B7%E5%80%BC%E8%AF%84%E4%BC%B0/image/survival_analysis/1744448389386.png&#34;
+	width=&#34;386&#34;
+	height=&#34;262&#34;
+	srcset=&#34;https://example.com/p/%E5%9F%BA%E4%BA%8E%E7%94%B5%E4%BF%A1%E5%AE%A2%E6%88%B7%E6%95%B0%E6%8D%AE%E7%9A%84%E7%94%9F%E5%AD%98%E5%88%86%E6%9E%90%E4%BB%8E%E5%BB%BA%E6%A8%A1%E5%88%B0%E5%AE%A2%E6%88%B7%E4%BB%B7%E5%80%BC%E8%AF%84%E4%BC%B0/image/survival_analysis/1744448389386_hu_4e7b1b3a4b21f782.png 480w, https://example.com/p/%E5%9F%BA%E4%BA%8E%E7%94%B5%E4%BF%A1%E5%AE%A2%E6%88%B7%E6%95%B0%E6%8D%AE%E7%9A%84%E7%94%9F%E5%AD%98%E5%88%86%E6%9E%90%E4%BB%8E%E5%BB%BA%E6%A8%A1%E5%88%B0%E5%AE%A2%E6%88%B7%E4%BB%B7%E5%80%BC%E8%AF%84%E4%BC%B0/image/survival_analysis/1744448389386_hu_98085e3789953eaa.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;1744448389386&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;147&#34;
+		data-flex-basis=&#34;353px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;hr&gt;
+</description>
+        </item>
+        
+    </channel>
+</rss>

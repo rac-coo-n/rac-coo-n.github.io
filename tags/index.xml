@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>Tags on Example Site</title>
+        <link>https://example.com/tags/</link>
+        <description>Recent content in Tags on Example Site</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>en</language>
+        <copyright>Example Person</copyright>
+        <lastBuildDate>Mon, 14 Apr 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://example.com/tags/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>AFT</title>
+        <link>https://example.com/tags/aft/</link>
+        <pubDate>Mon, 14 Apr 2025 00:00:00 +0000</pubDate>
+        
+        <guid>https://example.com/tags/aft/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Cox模型</title>
+        <link>https://example.com/tags/cox%E6%A8%A1%E5%9E%8B/</link>
+        <pubDate>Mon, 14 Apr 2025 00:00:00 +0000</pubDate>
+        
+        <guid>https://example.com/tags/cox%E6%A8%A1%E5%9E%8B/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Kaplan-Meier</title>
+        <link>https://example.com/tags/kaplan-meier/</link>
+        <pubDate>Mon, 14 Apr 2025 00:00:00 +0000</pubDate>
+        
+        <guid>https://example.com/tags/kaplan-meier/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>客户流失</title>
+        <link>https://example.com/tags/%E5%AE%A2%E6%88%B7%E6%B5%81%E5%A4%B1/</link>
+        <pubDate>Mon, 14 Apr 2025 00:00:00 +0000</pubDate>
+        
+        <guid>https://example.com/tags/%E5%AE%A2%E6%88%B7%E6%B5%81%E5%A4%B1/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>生存分析</title>
+        <link>https://example.com/tags/%E7%94%9F%E5%AD%98%E5%88%86%E6%9E%90/</link>
+        <pubDate>Mon, 14 Apr 2025 00:00:00 +0000</pubDate>
+        
+        <guid>https://example.com/tags/%E7%94%9F%E5%AD%98%E5%88%86%E6%9E%90/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>电信数据</title>
+        <link>https://example.com/tags/%E7%94%B5%E4%BF%A1%E6%95%B0%E6%8D%AE/</link>
+        <pubDate>Mon, 14 Apr 2025 00:00:00 +0000</pubDate>
+        
+        <guid>https://example.com/tags/%E7%94%B5%E4%BF%A1%E6%95%B0%E6%8D%AE/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Css</title>
+        <link>https://example.com/tags/css/</link>
+        <pubDate>Mon, 11 Mar 2019 00:00:00 +0000</pubDate>
+        
+        <guid>https://example.com/tags/css/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Html</title>
+        <link>https://example.com/tags/html/</link>
+        <pubDate>Mon, 11 Mar 2019 00:00:00 +0000</pubDate>
+        
+        <guid>https://example.com/tags/html/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Markdown</title>
+        <link>https://example.com/tags/markdown/</link>
+        <pubDate>Mon, 11 Mar 2019 00:00:00 +0000</pubDate>
+        
+        <guid>https://example.com/tags/markdown/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Themes</title>
+        <link>https://example.com/tags/themes/</link>
+        <pubDate>Mon, 11 Mar 2019 00:00:00 +0000</pubDate>
+        
+        <guid>https://example.com/tags/themes/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Tag With Whitespaces</title>
+        <link>https://example.com/tags/tag-with-whitespaces/</link>
+        <pubDate>Sat, 09 Mar 2019 00:00:00 +0000</pubDate>
+        
+        <guid>https://example.com/tags/tag-with-whitespaces/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Text</title>
+        <link>https://example.com/tags/text/</link>
+        <pubDate>Sat, 09 Mar 2019 00:00:00 +0000</pubDate>
+        
+        <guid>https://example.com/tags/text/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Emoji</title>
+        <link>https://example.com/tags/emoji/</link>
+        <pubDate>Tue, 05 Mar 2019 00:00:00 +0000</pubDate>
+        
+        <guid>https://example.com/tags/emoji/</guid>
+        <description></description>
+        </item>
+        
+    </channel>
+</rss>
